@@ -1,0 +1,37 @@
+import { Button } from "../../../components/Button";
+import type { Curiosity } from "../types/types";
+
+interface CuriosityCardProps {
+  curiosity: Curiosity;
+  onShare?: (curiosity: Curiosity) => void;
+  onVote?: (curiosity: Curiosity) => void;
+}
+
+export const CuriosityCard: React.FC<CuriosityCardProps> = ({
+  curiosity,
+  onShare,
+  onVote,
+}) => {
+  return (
+    <article className="group relative flex flex-col gap-3 rounded-xl border border-white/10 bg-[#111111] p-5 text-gray-200 transition hover:border-cyan-400/50 hover:shadow-[0_0_12px_#00FFFF40]">
+      <h3 className="font-mono text-lg font-semibold text-cyan-400 group-hover:text-cyan-300">
+        {curiosity.title}
+      </h3>
+
+      <p className="text-gray-400 leading-relaxed">{curiosity.content}</p>
+
+      <footer className="mt-2 flex items-center justify-center gap-3">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => onShare?.(curiosity)}
+        >
+          🔗 Share
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => onVote?.(curiosity)}>
+          🚀 Vote
+        </Button>
+      </footer>
+    </article>
+  );
+};
