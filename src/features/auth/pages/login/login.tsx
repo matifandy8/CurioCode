@@ -1,59 +1,58 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+import { Label } from '@/components/Label';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  type FormValues = { email: string; password: string };
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: 'onTouched' });
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: FormValues) => {
+    setError('');
+    // Log submitted data for debugging
+    console.log('Login submit:', data);
 
     // If an admin token was provided, persist and validate it
-
     // Otherwise proceed with normal (mocked) login flow
-
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        <div className="bg-cyan-900 border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8">
+        <div className="bg-cyan-950 border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8">
           <h1 className="text-3xl font-bold text-white text-center mb-2">
             Welcome Back
           </h1>
           <p className="text-gray-200 text-center mb-8">
             Login to your account
           </p>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                Email
-              </label>
-              <input 
-                id="email"
-                value={email} 
-                onChange={e => setEmail(e.target.value)} 
-                type="email" 
-                placeholder="Enter your email"
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-300 placeholder-gray-400 transition-all"
-                required
-              />
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" {...register('email', {
+                required: 'Email is required', validate: {
+                  maxLength: (v) =>
+                    v.length <= 50 || "The email should have at most 50 characters",
+                  matchPattern: (v) =>
+                    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+                    "Email address must be a valid address",
+                },
+              })} type="email" placeholder="Enter your email" />
+              {errors.email && <div className="text-sm text-red-500 mt-1">{errors.email.message}</div>}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
-                Password
-              </label>
-              <input 
-                id="password"
-                value={password} 
-                onChange={e => setPassword(e.target.value)} 
-                type="password" 
-                placeholder="Enter your password"
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-300 placeholder-gray-400 transition-all"
-                required
-              />
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" {...register('password', {
+                required: 'Password is required', minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters long"
+                }
+              })} type="password" placeholder="Enter your password" />
+              {errors.password && <div className="text-sm text-red-500 mt-1">{errors.password.message}</div>}
             </div>
 
             {error && (
@@ -62,12 +61,9 @@ const LoginPage: React.FC = () => {
               </div>
             )}
 
-            <button 
-              type="submit" 
-              className="w-full bg-cyan-300 text-black font-semibold py-3 rounded-md hover:bg-cyan-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
-            >
+            <Button type="submit" variant="primary" size="lg" className="mt-4">
               Login
-            </button>
+            </Button>
           </form>
 
           <div className="mt-6 text-center">
@@ -75,6 +71,12 @@ const LoginPage: React.FC = () => {
               Don't have an account?{' '}
               <a href="/register" className="text-cyan-500 hover:text-cyan-600 font-medium transition-colors">
                 Register here
+              </a>
+            </p>
+            <p className="text-gray-100 text-sm">
+              Don't remember your password?{' '}
+              <a href="/forgot-password" className="text-cyan-500 hover:text-cyan-600 font-medium transition-colors">
+                Reset it
               </a>
             </p>
           </div>

@@ -3,23 +3,6 @@
 
 Goal: Get a minimal but working full-stack app.
 
-🔧 Backend (FastAPI)
-~~ Initialize FastAPI project structure (screaming architecture). 
-~~ Setup database (PostgreSQL with SQLAlchemy / SQLModel).
- Implement JWT authentication (login/register endpoints).
- Create User and Curiosity models.
- Add role-based access control (user / admin).
-
- Create endpoints:
- POST /curiosities → create curiosity (pending approval)
- GET /curiosities → list approved curiosities
- POST /vote/{id} → vote for curiosity
- GET /admin/pending → list pending curiosities
- PATCH /admin/approve/{id} → approve curiosity
-
- Add unit tests (Pytest).
-
-
 
 💻 Frontend (React + TypeScript)
  Setup project with Vite or CRA + TypeScript.
@@ -68,13 +51,6 @@ Frontend
  Form validation (login/register/create).
  Auth context / store.
  Voting interaction.
-
-Backend
- Add Pytest for:
- Auth routes.
- CRUD curiosities.
- Admin approval.
- Use test DB (SQLite in-memory).
 
 
 

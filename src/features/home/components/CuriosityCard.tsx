@@ -1,10 +1,10 @@
-import { Button } from "../../../components/Button";
-import type { Curiosity } from "../types/types";
+import { Button } from "@/components/Button";
+import type { PublicCuriosity } from "@/shared/types/types";
 
 interface CuriosityCardProps {
-  curiosity: Curiosity;
-  onShare?: (curiosity: Curiosity) => void;
-  onVote?: (curiosity: Curiosity) => void;
+  curiosity: PublicCuriosity;
+  onShare?: (curiosity: PublicCuriosity) => void;
+  onVote?: (curiosity: PublicCuriosity) => void;
 }
 
 export const CuriosityCard: React.FC<CuriosityCardProps> = ({
@@ -18,7 +18,8 @@ export const CuriosityCard: React.FC<CuriosityCardProps> = ({
         {curiosity.title}
       </h3>
 
-      <p className="text-gray-400 leading-relaxed">{curiosity.content}</p>
+      <p className="text-gray-300 leading-relaxed">{curiosity.content}</p>
+      <p className="text-xs text-gray-400 mt-2">Submitted by {curiosity.submittedBy} on {curiosity.submittedAt}</p>
 
       <footer className="mt-2 flex items-center justify-center gap-3">
         <Button

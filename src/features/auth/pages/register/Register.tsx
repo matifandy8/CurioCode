@@ -1,94 +1,66 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+import { Label } from '@/components/Label';
 
 const RegisterPage: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  type FormValues = {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  };
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({ mode: 'onTouched' });
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Add validation logic here
-    if (password !== confirmPassword) {
+  const onSubmit = async (data: FormValues) => {
+    setError('');
+    console.log('Register submit:', data);
+    if (data.password !== data.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    
-    // Add registration logic here
+
+    // add registration logic here (mock)
+    // await fetch('/api/auth/register', { method: 'POST', body: JSON.stringify(data) })
   };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        <div className="bg-cyan-900 border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8">
+        <div className="bg-cyan-950 border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8">
           <h1 className="text-3xl font-bold text-white text-center mb-2">
             Create Account
           </h1>
           <p className="text-gray-200 text-center mb-8">
             Join CurioCode today
           </p>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-2">
-                Name
-              </label>
-              <input 
-                id="name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                type="text" 
-                placeholder="Enter your name"
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-300 placeholder-gray-400 transition-all"
-                required
-              />
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" {...register('name', { required: 'Name is required' })} placeholder="Enter your name" />
+              {errors.name && <div className="text-sm text-red-500 mt-1">{errors.name.message}</div>}
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                Email
-              </label>
-              <input 
-                id="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                type="email" 
-                placeholder="Enter your email"
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-300 placeholder-gray-400 transition-all"
-                required
-              />
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" {...register('email', { required: 'Email is required' })} type="email" placeholder="Enter your email" />
+              {errors.email && <div className="text-sm text-red-500 mt-1">{errors.email.message}</div>}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
-                Password
-              </label>
-              <input 
-                id="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                type="password" 
-                placeholder="Enter your password"
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-300 placeholder-gray-400 transition-all"
-                required
-              />
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Minimum 6 characters' } })} type="password" placeholder="Enter your password" />
+              {errors.password && <div className="text-sm text-red-500 mt-1">{errors.password.message}</div>}
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-2">
-                Confirm Password
-              </label>
-              <input 
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                type="password" 
-                placeholder="Confirm your password"
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-300 placeholder-gray-400 transition-all"
-                required
-              />
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input id="confirmPassword" {...register('confirmPassword', { required: 'Please confirm your password', validate: (v) => v === watch('password') || 'Passwords do not match' })} type="password" placeholder="Confirm your password" />
+              {errors.confirmPassword && <div className="text-sm text-red-500 mt-1">{errors.confirmPassword.message}</div>}
             </div>
 
             {error && (
@@ -97,12 +69,9 @@ const RegisterPage: React.FC = () => {
               </div>
             )}
 
-            <button 
-              type="submit" 
-              className="w-full bg-cyan-300 text-black font-semibold py-3 rounded-md hover:bg-cyan-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
-            >
+            <Button type="submit" variant="primary" size="lg" className="mt-4">
               Register
-            </button>
+            </Button>
           </form>
 
           <div className="mt-6 text-center">

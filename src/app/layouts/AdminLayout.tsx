@@ -1,23 +1,17 @@
 import React from 'react';
-import Header, { type NavItem } from '../../shared/components/Header';
+import AdminSidebar from '@/shared/components/AdminSidebar';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const adminNavItems: NavItem[] = [
-  { label: 'Dashboard', href: '/admin' },
-  { label: 'Manage Curiosities', href: '/approved-curiosities' },
-  { label: 'Logout', href: '/logout', variant: 'primary' },
-];
-
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <div className="admin-layout">
-      <Header brandName="CurioCode Admin" navItems={adminNavItems} />
-      <main>
-        {children}
-      </main>
+      <div className="flex min-h-screen bg-gray-950">
+        <AdminSidebar />
+        <main className="flex-1 ml-56 p-8">{children}</main>
+      </div>
     </div>
   );
 };
