@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   email: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
 }
 
 export interface AuthState {
@@ -23,3 +23,10 @@ export interface RegisterCredentials {
   password: string;
   confirmPassword: string;
 }
+
+export type FormValuesRegister = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};

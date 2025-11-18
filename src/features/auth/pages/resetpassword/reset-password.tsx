@@ -1,32 +1,61 @@
-import { useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Label } from '@/components/Label';
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+import { useRequestState } from '../../hooks/useRequest';
+
+const schema = yup
+  .object({
+    password: yup.string().required().min(6).trim(),
+    confirmPassword: yup.string().required().trim().oneOf([yup.ref('password')], 'Passwords do not match'),
+  })
+  .required()
 
 export function ResetPasswordPage() {
-  const [error, setError] = useState('');
   type FormValues = { password: string; confirmPassword: string };
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({ mode: 'onTouched' });
-
+  const navigate = useNavigate();
+  const { loading, error, status, setLoading, setSuccess, setError, reset } = useRequestState();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver(schema),
+  })
+
   const submit = async (data: FormValues) => {
-    setError('');
     console.log('Reset password submit:', { token, ...data });
     if (!token) {
       setError('Missing reset token.');
       return;
     }
+    
+    setLoading();
+    // TODO: Implement reset password API call
+    setTimeout(() => {
+      setSuccess();
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    }, 1000);
   };
 
-  if (success) {
+  const resetOnChange = (originalHandler?: React.ChangeEventHandler<HTMLInputElement>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    reset();
+    originalHandler?.(e);
+  };
+
+  if (status === 'success') {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="bg-cyan-950 border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8 text-center">
+          <div className="bg-[#012d2d] border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8 text-center">
             <h2 className="text-2xl font-semibold text-white mb-2">Password changed</h2>
             <p className="text-gray-200">Your password has been updated. You can now <a href="/login" className="text-cyan-400 underline">log in</a>.</p>
           </div>
@@ -36,44 +65,41 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        <div className="bg-cyan-950 border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8">
+        <div className="bg-[#012d2d] border-2 border-cyan-300 rounded-lg shadow-lg shadow-cyan-300/30 p-8">
           <h1 className="text-3xl font-bold text-white text-center mb-2">Reset Password</h1>
           <p className="text-gray-200 text-center mb-6">Enter a new password for your account.</p>
 
-          <form onSubmit={handleSubmit(submit)} className="space-y-4">
+          <form onSubmit={handleSubmit(submit)} className="space-y-6">
             <div>
-              <Label htmlFor="password" required>New password</Label>
+              <Label htmlFor="password">New Password</Label>
               <Input
                 id="password"
                 type="password"
-                {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Minimum 6 characters' } })}
+                {...register('password')}
                 placeholder="Enter new password"
+                onChange={resetOnChange()}
               />
-              {errors.password && <div className="text-sm text-red-500 mt-1">{errors.password.message}</div>}
+              {errors.password && <div className="text-sm text-red-500 mt-1 font-bold">{errors.password.message}</div>}
             </div>
 
             <div>
-              <Label htmlFor="confirm" required>Confirm password</Label>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
-                id="confirm"
+                id="confirmPassword"
                 type="password"
-                {...register('confirmPassword', { required: 'Please confirm your password', validate: (v) => v === watch('password') || 'Passwords do not match' })}
+                {...register('confirmPassword')}
                 placeholder="Confirm new password"
+                onChange={resetOnChange()}
               />
-              {errors.confirmPassword && <div className="text-sm text-red-500 mt-1">{errors.confirmPassword.message}</div>}
+              {errors.confirmPassword && <div className="text-sm text-red-500 mt-1 font-bold">{errors.confirmPassword.message}</div>}
             </div>
 
-            {error && (
-              <div className="bg-red-50 border-2 border-red-400 text-red-700 px-4 py-3 rounded-md">
-                {error}
-              </div>
-            )}
-
-            <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>
+            <Button type="submit" variant="primary" size="lg" className="mt-4" disabled={loading}>
               {loading ? 'Saving...' : 'Change password'}
             </Button>
+            {error && <div className="text-sm text-red-500 mt-1 font-bold">{error}</div>}
           </form>
 
           <div className="mt-6 text-center">
