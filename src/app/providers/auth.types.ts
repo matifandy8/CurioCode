@@ -8,9 +8,20 @@ export type User = {
 export type AuthContextType = {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; email: string; password: string }) => Promise<void>;
-  logout: () => void;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<AuthResponse>;
+  register: (name: string, email: string, password: string) => Promise<AuthResponse>;
+  logout: () => Promise<void>;
+  getUser: () => Promise<void>;
   isAdmin: boolean;
   isAuthenticated: boolean;
 };
+
+
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
