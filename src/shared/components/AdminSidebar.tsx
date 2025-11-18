@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { FaCheck, FaTimes, FaChartBar, FaPlus, FaListAlt } from 'react-icons/fa';
+import { Button } from '@/components/Button';
+import { useAuth } from '@/app/providers/useAuth';
 
 const adminNav = [
   { label: 'Pending', icon: <FaListAlt />, to: '/admin/pending' },
@@ -11,6 +13,12 @@ const adminNav = [
 
 const AdminSidebar: React.FC = () => {
   const location = useLocation();
+  const auth = useAuth();
+
+  const handleLogout = () => {
+    console.log("Logging out...");
+    auth.logout();
+  }
   return (
     <aside className="fixed top-0 left-0 h-screen w-56 border-r border-cyan-700 flex flex-col py-8 px-4 shadow-lg z-50">
       <div className="text-cyan-300 text-2xl font-bold mb-10 text-center">Admin</div>
@@ -28,6 +36,9 @@ const AdminSidebar: React.FC = () => {
             </li>
           ))}
         </ul>
+        <Button className="mt-8 w-full" variant="primary" onClick={handleLogout}>
+          Logout
+        </Button> 
       </nav>
     </aside>
   );
