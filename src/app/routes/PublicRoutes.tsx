@@ -1,12 +1,14 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import MainLayout from '../layouts/MainLayout';
-import { useAuth } from '../providers/useAuth';
+import { Navigate, Outlet } from "react-router-dom";
+import MainLayout from "../layouts/MainLayout";
+import { useAuth } from "../providers/useAuth";
+
 
 export default function PublicRoutes() {
   const { user } = useAuth();
-  const isAuthenticated = !!user;
 
-  if (isAuthenticated) {
+  console.log("PublicRoutes rendered");
+
+  if (user?.role === "admin") {
     return <Navigate to="/admin" replace />;
   }
 
@@ -16,4 +18,3 @@ export default function PublicRoutes() {
     </MainLayout>
   );
 }
-

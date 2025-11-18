@@ -3,17 +3,12 @@ import AdminLayout from '../layouts/AdminLayout';
 import { useAuth } from '../providers/useAuth';
 
 
-export default function PrivateRoutes() {
+export default function PrivateAdminRoutes() {
   const { user } = useAuth();
   const location = useLocation();
 
-  if (!user) {
+  if (!user || user?.role !== 'admin') {
     return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/approved-curiosities';
-  if (isAdminRoute && user?.role !== 'admin') {
-    return <Navigate to="/" replace />;
   }
 
   return (
