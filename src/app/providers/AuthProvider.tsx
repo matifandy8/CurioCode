@@ -28,8 +28,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!storedAccess) {
         try {
           const res = await AuthService.refreshToken();
-          setToken(res.accessToken);
-          setRefreshToken(res.refreshToken);
+          setToken(res.access_token);
+          setRefreshToken(res.refresh_token);
           await loadUser();
         } catch {
           logout(false);
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch {
         try {
           const res = await AuthService.refreshToken();
-          setToken(res.accessToken);
+          setToken(res.access_token);
           await loadUser();
         } catch {
           logout(false);
@@ -78,12 +78,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     const res = await AuthService.login(email, password);
+    console.log(res.access_token);
 
     if (!res.success) throw new Error(res.message);
 
-    localStorage.setItem(AUTH_KEYS.ACCESS, res.accessToken);
-    setToken(res.accessToken);
-    setRefreshToken(res.refreshToken);
+    localStorage.setItem(AUTH_KEYS.ACCESS, res.access_token);
+    setToken(res.access_token);
+    setRefreshToken(res.refresh_token);
     await loadUser();
 
     setLoading(false);

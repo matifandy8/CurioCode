@@ -1,7 +1,7 @@
 import { AUTH_KEYS } from "@/config/auth";
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000/";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -11,9 +11,9 @@ export const api = axios.create({
 
 // Attach Authorization header
 api.interceptors.request.use((config) => {
-  const accessToken = localStorage.getItem(AUTH_KEYS.ACCESS);
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+  const access_token = localStorage.getItem(AUTH_KEYS.ACCESS);
+  if (access_token) {
+    config.headers.Authorization = `Bearer ${access_token}`;
   }
   return config;
 });
@@ -21,7 +21,7 @@ api.interceptors.request.use((config) => {
 let isRefreshing = false;
 let queuedRequests: ((token: string) => void)[] = [];
 
-function onAccessTokenFetched(token: string) {
+function onaccess_tokenFetched(token: string) {
   queuedRequests.forEach((cb) => cb(token));
   queuedRequests = [];
 }
@@ -122,20 +122,20 @@ api.interceptors.response.use(
         refreshToken,
       });
 
-      const newAccessToken = refreshResponse.data.accessToken;
+      const newaccess_token = refreshResponse.data.access_token;
       const newRefreshToken = refreshResponse.data.refreshToken;
 
       // Save new tokens
-      localStorage.setItem(AUTH_KEYS.ACCESS, newAccessToken);
+      localStorage.setItem(AUTH_KEYS.ACCESS, newaccess_token);
       localStorage.setItem(AUTH_KEYS.REFRESH, newRefreshToken);
 
-      onAccessTokenFetched(newAccessToken);
+      onaccess_tokenFetched(newaccess_token);
       isRefreshing = false;
 
       // Retry original request with new token
       originalRequest.headers = {
         ...originalRequest.headers,
-        Authorization: `Bearer ${newAccessToken}`,
+        Authorization: `Bearer ${newaccess_token}`,
       };
 
       return api(originalRequest);

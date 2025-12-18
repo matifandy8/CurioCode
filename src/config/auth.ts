@@ -1,5 +1,5 @@
 export const AUTH_KEYS = {
-  ACCESS: "accessToken",
-  REFRESH: "refreshToken",
+  ACCESS: "access_token",
+  REFRESH: "refresh_token",
   USER: "authUser",
 };

@@ -1,9 +1,9 @@
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/Button';
 import type { AdminCuriosity } from '@/shared/types/types';
-import { getCuriosities } from '@/features/curiosities/api/getCuriosities';
+import { CuriositiesService } from '@/features/curiosities/services/curiosities.services';
 
 const stats = [
   {
@@ -27,7 +27,16 @@ const stats = [
 ];
 
 const AdminPage: React.FC = () => {
-  const [curiosities, setCuriosities] = useState<AdminCuriosity[]>(() => getCuriosities('admin') as AdminCuriosity[]);
+  const [curiosities, setCuriosities] = useState<AdminCuriosity[]>([]);
+
+  useEffect(() => {
+    const fetchCuriosities = async () => {
+      const res = await CuriositiesService.getUserCuriosities();
+      console.log(res);
+      setCuriosities(res as AdminCuriosity[]);
+    };
+    fetchCuriosities();
+  }, []);
 
   const toggleApproval = (id: number) => {
     setCuriosities((prev) =>
@@ -47,7 +56,6 @@ const AdminPage: React.FC = () => {
       <h1 className="text-4xl font-bold text-cyan-300 mb-2 font-jetbrains-mono tracking-tight drop-shadow">Admin Dashboard</h1>
       <p className="text-gray-400 text-center mb-8 text-lg">Admin overview and statistics. Only admins can access this page.</p>
 
-      {/* Estadísticas */}
       <section className="w-full max-w-2xl mb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {stats.map((stat) => (
@@ -65,7 +73,6 @@ const AdminPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Gestión de curiosidades */}
       <section className="w-full max-w-3xl bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-800">
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-2">
           <div>
